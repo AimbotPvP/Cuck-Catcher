@@ -1,0 +1,5 @@
+name: Cuck-Catcher
+main: party.cuckcatcher.impl.CuckCatcher
+author: SkidRevenant
+version: 1.0.0-SNAPSHOT
+description: null
