@@ -7,7 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class CuckCatcher extends JavaPlugin {
 
-    //
 
     public void onEnable() {
 
