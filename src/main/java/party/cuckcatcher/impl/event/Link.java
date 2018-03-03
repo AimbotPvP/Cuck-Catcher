@@ -58,8 +58,8 @@ public final class Link<T> implements EventHook<T> {
     }
 
     /**
-     * Returns the priority of this listener. The priority
-     * is used to determine the order of listener invocations
+     * Returns the priority of this listeners. The priority
+     * is used to determine the order of listeners invocations
      * for a given event. The return value is limited by the
      * {@code HIGHEST} and {@code LOWEST} values of {@code EventPriority}.
      *

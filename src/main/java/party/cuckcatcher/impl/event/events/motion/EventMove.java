@@ -21,7 +21,9 @@ public class EventMove {
 
     private final PlayerProperty playerProperty;
 
-    private final double offsetH;
+    private final double horizontalDistance;
+
+    private final double verticalDistance;
 
     private final boolean isFromGround;
 

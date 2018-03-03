@@ -19,7 +19,7 @@ public interface EventBus {
     void subscribe(Object object);
 
     /**
-     * Unsubscribes an object from the listener map
+     * Unsubscribes an object from the listeners map
      *
      * @see #subscribe(Object)
      *
