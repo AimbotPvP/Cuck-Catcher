@@ -75,15 +75,14 @@ public class EventManager implements EventBus {
     private void subscribe(Link link) {
         List<Link> links = SUBSCRIPTION_MAP.computeIfAbsent(link.getTarget(), target -> new CopyOnWriteArrayList<>());
 
-        final AtomicInteger index = new AtomicInteger(0);
-
-        links.stream().filter(l -> index.get() < links.size()).forEach(l -> {
-            index.getAndIncrement();
-
-            if (link.getPriority() > links.get(index.get()).getPriority()) {
-                links.add(index.get(), link);
+        int index = 0;
+        for (; index < links.size(); index++) {
+            if (link.getPriority() < links.get(index).getPriority()) {
+                break;
             }
-        });
+        }
+
+        links.add(index, link);
 
     }
 }

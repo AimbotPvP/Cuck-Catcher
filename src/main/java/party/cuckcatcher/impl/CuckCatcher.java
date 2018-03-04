@@ -6,6 +6,8 @@ import org.reflections.Reflections;
 import party.cuckcatcher.api.listener.Listener;
 import party.cuckcatcher.api.manager.Manager;
 import party.cuckcatcher.impl.event.EventManager;
+import party.cuckcatcher.impl.property.PlayerPropertyManager;
+import party.cuckcatcher.impl.type.TypeManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,14 @@ public class CuckCatcher extends JavaPlugin {
 
         this.managers.clear();
         this.listeners.clear();
+    }
+
+    public PlayerPropertyManager getPlayerPropertyManager() {
+        return (PlayerPropertyManager) this.managers.stream().filter(manager -> manager.getClass() == PlayerPropertyManager.class).findFirst().orElse(null);
+    }
+
+    public TypeManager getTypeManager() {
+        return (TypeManager) this.managers.stream().filter(manager -> manager.getClass() == TypeManager.class).findFirst().orElse(null);
     }
 
     private <T> void addClassesToList(String directory, Class<T> superClass, List<T> list) {
