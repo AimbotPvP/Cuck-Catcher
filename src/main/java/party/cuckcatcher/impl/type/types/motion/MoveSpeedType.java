@@ -30,9 +30,7 @@ public class MoveSpeedType extends Type {
         double horizontalDistance = event.getHorizontalDistance(),
                 verticalDistance = event.getVerticalDistance();
 
-        Location to = event.getPlayerMoveEvent().getTo();
-
-        double deltaHorizontal = Math.max(0, horizontalDistance - event.getPlayerProperty().getPreviousHorizontalDistance());
+        double deltaHorizontal = Math.max(0, horizontalDistance - event.getPlayerProperty().previousHorizontalDistance);
 
         boolean isSprinting = player.isSprinting() && player.getFoodLevel() > 5;
 
@@ -42,11 +40,11 @@ public class MoveSpeedType extends Type {
 
             double horizontalDistanceLimit = 0.98;
 
-            boolean onGround = to.clone().subtract(0.0, 0.001, 0.0).getBlock().getType() != Material.AIR;
-
-            if (event.isFromGround() && !onGround) {
+            if (event.isFromGround()) {
 
                 if (isSprinting) horizontalDistanceLimit *= 1.3;
+
+                if (playerProperty.underBlock) horizontalDistanceLimit *= 20.0;
 
                 double blockFriction = 0.91;
 
@@ -59,28 +57,28 @@ public class MoveSpeedType extends Type {
                 }
 
             } else {
-                horizontalDistanceLimit = isSprinting ? 0.029872 : 0.01992536;
+                horizontalDistanceLimit = isSprinting ? 0.031372 : 0.01992536;
             }
 
             horizontalDistanceLimit *= 0.98;
 
-            playerProperty.assumeHitGround = deltaHorizontal > 0.1f && deltaHorizontal > horizontalDistanceLimit;
+            playerProperty.assumeHitGround = deltaHorizontal > 0.1f && deltaHorizontal > horizontalDistanceLimit && (playerProperty.airTicks == 0 || playerProperty.airTicks == 8 || playerProperty.airTicks == 9 || playerProperty.airTicks > 13);
 
             if (isJumpTick) {
                 playerProperty.jumpTicks = 0;
             }
 
-            if (playerProperty.assumeHitGround && horizontalDistanceLimit < 0.03) {
+            if (playerProperty.assumeHitGround && horizontalDistanceLimit < 0.0314) {
                 horizontalDistanceLimit *= 4.75;
             }
 
             if (deltaHorizontal > horizontalDistanceLimit) {
 
-                Bukkit.broadcastMessage(String.format("%s : %s", deltaHorizontal, horizontalDistanceLimit));
+                Bukkit.broadcastMessage(String.format("%s : %s : %s", deltaHorizontal, playerProperty.airTicks, horizontalDistanceLimit));
             }
         }
 
-        playerProperty.setPreviousHorizontalDistance(Math.max(0.1, horizontalDistance * 0.91));
+        playerProperty.previousHorizontalDistance = Math.max(0.1, horizontalDistance * 0.91);
 
     }, new EventMoveFilter(false));
 }

@@ -1,8 +1,6 @@
 package party.cuckcatcher.impl.property;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.util.UUID;
 
@@ -14,11 +12,11 @@ public class PlayerProperty {
 
     private final UUID uuid;
 
-    @Getter
-    @Setter
     public double previousHorizontalDistance = 0,
     jumpTicks = 0,
-    walkingTicks = 0;
+    airTicks = 0;
 
-    public boolean assumeHitGround = false;
+    public boolean assumeHitGround = false,
+    onGround = false,
+    underBlock = false;
 }

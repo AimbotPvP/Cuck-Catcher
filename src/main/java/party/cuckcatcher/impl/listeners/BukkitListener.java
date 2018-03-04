@@ -35,11 +35,33 @@ public class BukkitListener implements Listener, org.bukkit.event.Listener {
 
         PlayerProperty playerProperty = this.getCuckCatcher().getPlayerPropertyManager().getProperty(player);
 
+        Location groundLocation = from.clone().subtract(0, 0.001, 0),
+        aboveLocation = from.clone().add(0, 2.001, 0);
+
+        playerProperty.onGround = isOnGround(groundLocation);
+        playerProperty.underBlock = isOnGround(aboveLocation);
+
+        playerProperty.airTicks = playerProperty.onGround ? 0 : playerProperty.airTicks + 1;
+
         if (verticalDistance > 0.419) {
             playerProperty.jumpTicks = 1;
         }
 
         this.getCuckCatcher().getBus().post(new EventMove(event, player, playerProperty, horizontalDistance, verticalDistance, to.getY() > from.getY()));
+    }
+
+    private boolean isOnGround(Location location) {
+        switch (location.getBlock().getType()) {
+            case SNOW:
+            case SNOW_BLOCK:
+            case CARPET:
+            case SKULL:
+            case WATER_LILY:
+                return true;
+
+            default:
+                return location.getBlock().getType().isSolid();
+        }
     }
 
     @Override
