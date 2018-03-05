@@ -18,4 +18,6 @@ public @interface TypeManifest {
     boolean enabled() default true;
 
     boolean autoban() default true;
+
+    int secsToExpire() default 60;
 }

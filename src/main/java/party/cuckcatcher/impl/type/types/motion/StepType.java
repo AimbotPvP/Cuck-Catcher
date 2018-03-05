@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import party.cuckcatcher.api.event.EventListener;
 import party.cuckcatcher.api.type.Type;
 import party.cuckcatcher.api.type.TypeManifest;
+import party.cuckcatcher.impl.alert.Alert;
 import party.cuckcatcher.impl.event.Link;
 import party.cuckcatcher.impl.event.events.motion.EventMove;
 import party.cuckcatcher.impl.filters.motion.EventMoveFilter;
@@ -28,7 +29,7 @@ public class StepType extends Type {
         boolean wasFromGround = from.clone().subtract(0.0, 0.001, 0.0).getBlock().getType() != Material.AIR;
 
         if (event.isFromGround() && wasFromGround && verticalDistance > 0.5) {
-
+            playerProperty.addAlert(new Alert(this, playerProperty));
         }
 
     }, new EventMoveFilter(false));

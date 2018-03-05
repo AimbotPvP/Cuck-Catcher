@@ -1,6 +1,10 @@
 package party.cuckcatcher.impl.property;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import party.cuckcatcher.impl.alert.Alert;
 
 import java.util.UUID;
 
@@ -10,13 +14,30 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PlayerProperty {
 
+    @Getter
+    private final PlayerPropertyFactory playerPropertyFactory = new PlayerPropertyFactory();
+
     private final UUID uuid;
 
     public double previousHorizontalDistance = 0,
     jumpTicks = 0,
-    airTicks = 0;
+    airTicks = 0,
+    moveSpeed = 1.0;
 
     public boolean assumeHitGround = false,
     onGround = false,
-    underBlock = false;
+    underBlock = false,
+    attacking = false,
+    digging = false,
+    placing = false;
+
+    public void addAlert(Alert alert) {
+        if (alert.isAlert()) {
+            Bukkit.getOnlinePlayers().stream()
+                    .filter(Player::isOp)
+                    .forEach(player -> {
+                        player.sendMessage(String.format("\u00a77(#) \u00a7c[CC] \u00a73%s \u00a77logged %s %d VL (#)", Bukkit.getPlayer(this.uuid).getName(), alert.getType().getLabel(), alert.getTypeInfo().getAlertManager().getCurrentVl()));
+                    });
+        }
+    }
 }

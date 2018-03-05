@@ -12,7 +12,7 @@ public class Type {
 
     private String label;
 
-    private int maxVl;
+    private int maxVl, secsToExpire;
 
     private boolean enabled, autoban;
 
@@ -30,6 +30,7 @@ public class Type {
         this.enabled = this.typeManifest.enabled();
         this.autoban = this.typeManifest.autoban();
         this.maxVl = this.typeManifest.maxVl();
+        this.secsToExpire = this.typeManifest.secsToExpire();
 
         System.out.println(String.format("Successfully initiated %s", this.getLabel()));
     }
