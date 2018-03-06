@@ -1,54 +1,55 @@
 package party.cuckcatcher.impl.type.types.motion;
 
-import com.google.common.util.concurrent.AtomicDouble;
-import net.minecraft.server.v1_8_R3.AttributeModifiable;
-import net.minecraft.server.v1_8_R3.AttributeModifier;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
+
+import org.bukkit.GameMode;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import party.cuckcatcher.api.bridge.Bridge;
 import party.cuckcatcher.api.event.EventListener;
 import party.cuckcatcher.api.type.Type;
 import party.cuckcatcher.api.type.TypeManifest;
+import party.cuckcatcher.impl.alert.Alert;
 import party.cuckcatcher.impl.event.Link;
 import party.cuckcatcher.impl.event.events.motion.EventMove;
 import party.cuckcatcher.impl.filters.motion.EventMoveFilter;
 import party.cuckcatcher.impl.property.PlayerProperty;
-
-import java.util.Collection;
-import java.util.UUID;
 
 /**
  * Made by SkidRevenant at 03/03/2018
  */
 @TypeManifest(label = "MoveSpeed")
 public class MoveSpeedType extends Type {
-    private UUID movementSpeedUUID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
 
-    //this is all from the minecraft source code, it's still a work in progress
+    //this is mostly from the minecraft source code, it's still a work in progress
+    //TODO: Make a velocity container and account for velocity
 
     @EventListener
     private Link<EventMove> onMoveListener = new Link<>(event -> {
         PlayerProperty playerProperty = event.getPlayerProperty();
 
+        Player player = event.getPlayer();
+
+        if (player.isFlying() || player.getGameMode() == GameMode.CREATIVE) return;
+
+        Bridge bridge = this.getCuckCatcher().getBridge();
+
         double horizontalDistance = event.getHorizontalDistance(),
                 verticalDistance = event.getVerticalDistance();
 
-        double horizontalSpeed = playerProperty.moveSpeed;
+        double horizontalSpeed = playerProperty.getPlayerPropertyFactory().moveSpeed;
 
-        double speedLimit = playerProperty.underBlock ? 1.17453292 : 1.0;
+        double speedLimit = playerProperty.getPlayerPropertyFactory().underBlock ? 1.17453292 : 1.0;
 
         double blockFriction = 0.91;
 
-        if (playerProperty.onGround) {
+        if (bridge.onGround(player)) {
 
             horizontalSpeed *= 1.3;
             blockFriction *= 0.91;
             horizontalSpeed *= 0.16277136 / (blockFriction * blockFriction * blockFriction);
 
-            if (verticalDistance > 1.0E-4) {
+            if (verticalDistance > 0.41) {
                 horizontalSpeed += 0.2;
             }
 
@@ -57,35 +58,35 @@ public class MoveSpeedType extends Type {
             blockFriction = 0.91;
         }
 
-        double moveSpeed = (horizontalDistance - playerProperty.previousHorizontalDistance) / horizontalSpeed;
+        double previousHorizontal = Math.max(0.1, playerProperty.getPlayerPropertyFactory().previousHorizontalDistance);
 
-        moveSpeed *= 0.98;
-
-        if (moveSpeed > speedLimit) {
-            Bukkit.broadcastMessage(String.format("%s", moveSpeed));
+        if (horizontalDistance - previousHorizontal > horizontalSpeed * 1.1) {
+            playerProperty.getPlayerPropertyFactory().moveSpeed = Math.max(playerProperty.getPlayerPropertyFactory().moveSpeed, this.getCuckCatcher().getBridge().updateMovementSpeed(event.getPlayer()));
         }
+            double moveSpeed = (horizontalDistance - previousHorizontal) / horizontalSpeed;
 
-        playerProperty.previousHorizontalDistance = horizontalDistance * blockFriction;
+            moveSpeed *= 0.98;
+
+            if (horizontalDistance > 0.1) {
+                playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().add(moveSpeed);
+            }
+
+            if (playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().size() == 8) {
+                double averageSpeed = playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().stream().mapToDouble(d -> d).average().getAsDouble();
+
+
+                if (averageSpeed > 0.9604 || averageSpeed < -1.2) {
+                    playerProperty.addAlert(new Alert(this, playerProperty));
+                }
+
+                playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().clear();
+            }
+
+            if (moveSpeed > speedLimit) {
+                playerProperty.addAlert(new Alert(this, playerProperty));
+            }
+
+        playerProperty.getPlayerPropertyFactory().previousHorizontalDistance = horizontalDistance * blockFriction;
 
     }, new EventMoveFilter(false));
-
-    private double updateMovementSpeed(EntityLiving entity) {
-        AttributeModifiable attribute = (AttributeModifiable) entity.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
-        double base = attribute.b();
-
-        AtomicDouble value = new AtomicDouble(base);
-
-        attribute.a(0).forEach(modifier -> value.getAndAdd(modifier.d()));
-
-        attribute.a(1).forEach(modifier -> value.getAndAdd(modifier.d() * base));
-
-        attribute.a(2).stream().filter(modifier -> !modifier.a().equals(this.movementSpeedUUID)).forEach(modifier -> {
-            double newValue = value.get();
-
-            newValue *= 1.0 + modifier.d();
-            value.set(newValue);
-        });
-
-        return value.get();
-    }
 }

@@ -25,14 +25,14 @@ public class CriticalsType extends Type {
 
         double verticalDistance = event.getVerticalDistance();
 
-        if (event.isFromGround() && playerProperty.attacking && !playerProperty.underBlock) {
+        if (event.isFromGround() && playerProperty.getPlayerPropertyFactory().attacking && !playerProperty.getPlayerPropertyFactory().underBlock) {
 
             if (verticalDistance < 0.3) {
 
             }
         }
 
-        playerProperty.attacking = false;
+        playerProperty.getPlayerPropertyFactory().attacking = false;
 
     }, new EventMoveFilter(true));
 
@@ -41,7 +41,7 @@ public class CriticalsType extends Type {
 
         PlayerProperty playerProperty = event.getPlayerProperty();
 
-        playerProperty.attacking = true;
+        playerProperty.getPlayerPropertyFactory().attacking = true;
 
 
     });

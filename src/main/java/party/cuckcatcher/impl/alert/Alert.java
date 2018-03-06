@@ -30,6 +30,10 @@ public class Alert {
         this.typeInfo = playerProperty.getPlayerPropertyFactory().get(type);
         this.alert = this.typeInfo.getAlertManager().alert();
 
-        this.info = args == null ? "" : String.format(" (%s) ", args[0]);
+        try {
+            this.info = args == null ? "" : String.format(" (%s) ", args[0]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            this.info = "";
+        }
     }
 }

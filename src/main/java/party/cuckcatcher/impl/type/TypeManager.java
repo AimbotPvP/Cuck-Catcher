@@ -8,6 +8,7 @@ import party.cuckcatcher.api.type.Type;
 import party.cuckcatcher.api.type.TypeManifest;
 import party.cuckcatcher.impl.CuckCatcher;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,9 @@ public class TypeManager implements Manager {
         try {
             type = (Type) clazz.newInstance();
             this.getCuckCatcher().getBus().subscribe(type);
+            type.setCuckCatcher(this.getCuckCatcher());
             this.types.add(type);
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -19,18 +19,6 @@ public class PlayerProperty {
 
     private final UUID uuid;
 
-    public double previousHorizontalDistance = 0,
-    jumpTicks = 0,
-    airTicks = 0,
-    moveSpeed = 1.0;
-
-    public boolean assumeHitGround = false,
-    onGround = false,
-    underBlock = false,
-    attacking = false,
-    digging = false,
-    placing = false;
-
     public void addAlert(Alert alert) {
         if (alert.isAlert()) {
             Bukkit.getOnlinePlayers().stream()

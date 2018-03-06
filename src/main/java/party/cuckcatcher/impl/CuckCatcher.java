@@ -3,8 +3,10 @@ package party.cuckcatcher.impl;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
+import party.cuckcatcher.api.bridge.Bridge;
 import party.cuckcatcher.api.listener.Listener;
 import party.cuckcatcher.api.manager.Manager;
+import party.cuckcatcher.impl.bridges.spigot1_8.Spigot1_8;
 import party.cuckcatcher.impl.event.EventManager;
 import party.cuckcatcher.impl.property.PlayerPropertyManager;
 import party.cuckcatcher.impl.type.TypeManager;
@@ -25,6 +27,9 @@ public class CuckCatcher extends JavaPlugin {
 
     private final List<Listener> listeners = new ArrayList<>();
 
+    @Getter
+    private Bridge bridge;
+
 
     public void onEnable() {
         this.addClassesToList("party.cuckcatcher.impl", Manager.class, this.managers);
@@ -33,6 +38,7 @@ public class CuckCatcher extends JavaPlugin {
         this.managers.forEach(Manager::enable);
 
         this.listeners.forEach(Listener::enable);
+        this.bridge = new Spigot1_8();
     }
 
     public void onDisable() {

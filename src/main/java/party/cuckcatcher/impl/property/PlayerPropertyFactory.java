@@ -1,9 +1,12 @@
 package party.cuckcatcher.impl.property;
 
+import lombok.Getter;
 import party.cuckcatcher.api.type.Type;
 import party.cuckcatcher.impl.type.TypeInfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,4 +26,19 @@ public class PlayerPropertyFactory {
 
         return typeInformation;
     }
+
+    @Getter
+    private List<Double> moveSpeedSamples = new ArrayList<>();
+
+    public double previousHorizontalDistance = 0,
+            jumpTicks = 0,
+            airTicks = 0,
+            moveSpeed = 1.0;
+
+    public boolean assumeHitGround = false,
+            onGround = false,
+            underBlock = false,
+            attacking = false,
+            digging = false,
+            placing = false;
 }

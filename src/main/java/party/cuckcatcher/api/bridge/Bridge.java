@@ -1,5 +1,6 @@
 package party.cuckcatcher.api.bridge;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 /**
@@ -7,7 +8,9 @@ import org.bukkit.entity.Player;
  */
 public interface Bridge {
 
-    double updateMovementSpeed(Player player);
+    double updateMovementSpeed(Entity player);
 
+    double getBlockfriction(Player player);
 
+    boolean onGround(Player player);
 }

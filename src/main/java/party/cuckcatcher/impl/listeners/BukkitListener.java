@@ -2,6 +2,7 @@ package party.cuckcatcher.impl.listeners;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,14 +39,12 @@ public class BukkitListener implements Listener, org.bukkit.event.Listener {
         Location groundLocation = from.clone().subtract(0, 0.001, 0),
         aboveLocation = from.clone().add(0, 2.001, 0);
 
-        playerProperty.onGround = isOnGround(groundLocation);
-        playerProperty.underBlock = isOnGround(aboveLocation);
+        //Bukkit.broadcastMessage(to.clone().subtract(0, 0.001, 0).getBlock().getType().name());
 
-        playerProperty.airTicks = playerProperty.onGround ? 0 : playerProperty.airTicks + 1;
+        playerProperty.getPlayerPropertyFactory().onGround = isOnGround(groundLocation);
+        playerProperty.getPlayerPropertyFactory().underBlock = isOnGround(aboveLocation);
 
-        if (verticalDistance > 0.419) {
-            playerProperty.jumpTicks = 1;
-        }
+        playerProperty.getPlayerPropertyFactory().airTicks = playerProperty.getPlayerPropertyFactory().onGround ? 0 : playerProperty.getPlayerPropertyFactory().airTicks + 1;
 
         this.getCuckCatcher().getBus().post(new EventMove(event, player, playerProperty, horizontalDistance, verticalDistance, to.getY() > from.getY()));
     }
@@ -57,6 +56,11 @@ public class BukkitListener implements Listener, org.bukkit.event.Listener {
             case CARPET:
             case SKULL:
             case WATER_LILY:
+                return true;
+
+            case SIGN:
+            case SIGN_POST:
+            case WALL_SIGN:
                 return true;
 
             default:
