@@ -61,7 +61,7 @@ public class MoveSpeedType extends Type {
         double previousHorizontal = Math.max(0.1, playerProperty.getPlayerPropertyFactory().previousHorizontalDistance);
 
         if (horizontalDistance - previousHorizontal > horizontalSpeed * 1.1) {
-            playerProperty.getPlayerPropertyFactory().moveSpeed = Math.max(playerProperty.getPlayerPropertyFactory().moveSpeed, this.getCuckCatcher().getBridge().updateMovementSpeed(event.getPlayer()));
+            playerProperty.getPlayerPropertyFactory().moveSpeed = Math.max(playerProperty.getPlayerPropertyFactory().moveSpeed, this.getCuckCatcher().getBridge().updateMovementSpeed(player));
         }
             double moveSpeed = (horizontalDistance - previousHorizontal) / horizontalSpeed;
 
