@@ -75,8 +75,7 @@ public class MoveSpeedType extends Type {
         if (playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().size() == 8) {
             double averageSpeed = playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().stream().mapToDouble(d -> d).average().getAsDouble();
 
-            if (Math.abs(averageSpeed) > 0.9604) {
-                Bukkit.broadcastMessage("" + averageSpeed);
+            if (Math.abs(averageSpeed) > 0.9604003) {
                 playerProperty.addAlert(new Alert(this, playerProperty));
             }
 
