@@ -63,27 +63,28 @@ public class MoveSpeedType extends Type {
         if (horizontalDistance - previousHorizontal > horizontalSpeed * 1.1) {
             playerProperty.getPlayerPropertyFactory().moveSpeed = Math.max(playerProperty.getPlayerPropertyFactory().moveSpeed, this.getCuckCatcher().getBridge().updateMovementSpeed(player));
         }
-            double moveSpeed = (horizontalDistance - previousHorizontal) / horizontalSpeed;
 
-            moveSpeed *= 0.98;
+        double moveSpeed = (horizontalDistance - previousHorizontal) / horizontalSpeed;
 
-            if (horizontalDistance > 0.1) {
-                playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().add(moveSpeed);
-            }
+        moveSpeed *= 0.98;
 
-            if (playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().size() == 8) {
-                double averageSpeed = playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().stream().mapToDouble(d -> d).average().getAsDouble();
+        if (horizontalDistance > 0.1) {
+            playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().add(moveSpeed);
+        }
 
-                if (averageSpeed > 0.9604 || averageSpeed < -0.9604) {
-                    playerProperty.addAlert(new Alert(this, playerProperty));
-                }
+        if (playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().size() == 8) {
+            double averageSpeed = playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().stream().mapToDouble(d -> d).average().getAsDouble();
 
-                playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().clear();
-            }
-
-            if (moveSpeed > speedLimit) {
+            if (averageSpeed > 0.9604 || averageSpeed < -0.9604) {
                 playerProperty.addAlert(new Alert(this, playerProperty));
             }
+
+            playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().clear();
+        }
+
+        if (moveSpeed > speedLimit) {
+            playerProperty.addAlert(new Alert(this, playerProperty));
+        }
 
         playerProperty.getPlayerPropertyFactory().previousHorizontalDistance = horizontalDistance * blockFriction;
 
