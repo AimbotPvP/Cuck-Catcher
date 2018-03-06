@@ -74,8 +74,7 @@ public class MoveSpeedType extends Type {
             if (playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().size() == 8) {
                 double averageSpeed = playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().stream().mapToDouble(d -> d).average().getAsDouble();
 
-
-                if (averageSpeed > 0.9604 || averageSpeed < -1.2) {
+                if (averageSpeed > 0.9604 || averageSpeed < -0.9604) {
                     playerProperty.addAlert(new Alert(this, playerProperty));
                 }
 
