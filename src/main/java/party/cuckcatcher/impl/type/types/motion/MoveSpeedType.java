@@ -43,7 +43,9 @@ public class MoveSpeedType extends Type {
 
         double blockFriction = playerProperty.getPlayerPropertyFactory().blockfriction;
 
-        if (bridge.onGround(player)) {
+        boolean isPlayerOnGround = bridge.onGround(player);
+
+        if (isPlayerOnGround) {
 
             horizontalSpeed *= 1.3;
             blockFriction *= 0.91;
@@ -75,11 +77,15 @@ public class MoveSpeedType extends Type {
         if (playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().size() == 8) {
             double averageSpeed = playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().stream().mapToDouble(d -> d).average().getAsDouble();
 
-            if (Math.abs(averageSpeed) > 0.9604003) {
+            if (Math.abs(averageSpeed) > 0.9633003) {
                 playerProperty.addAlert(new Alert(this, playerProperty));
             }
 
             playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().clear();
+        }
+
+        if (player.isBlocking()) {
+            moveSpeed *= isPlayerOnGround ? (verticalDistance <= 0 || verticalDistance > 0.4199) ? 19.0 : 1.3 : 1.6;
         }
 
         if (moveSpeed > speedLimit) {
