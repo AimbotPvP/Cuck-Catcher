@@ -33,10 +33,10 @@ public class PlayerPropertyFactory {
     public double previousHorizontalDistance = 0,
             jumpTicks = 0,
             airTicks = 0,
-            moveSpeed = 1.0;
+            moveSpeed = 1.0,
+            blockfriction = 0.91;
 
-    public boolean assumeHitGround = false,
-            onGround = false,
+    public boolean onGround = false,
             underBlock = false,
             attacking = false,
             digging = false,

@@ -41,7 +41,7 @@ public class MoveSpeedType extends Type {
 
         double speedLimit = playerProperty.getPlayerPropertyFactory().underBlock ? 1.17453292 : 1.0;
 
-        double blockFriction = 0.91;
+        double blockFriction = playerProperty.getPlayerPropertyFactory().blockfriction;
 
         if (bridge.onGround(player)) {
 
@@ -49,7 +49,7 @@ public class MoveSpeedType extends Type {
             blockFriction *= 0.91;
             horizontalSpeed *= 0.16277136 / (blockFriction * blockFriction * blockFriction);
 
-            if (verticalDistance > 0.41) {
+            if (verticalDistance > 0.4199) {
                 horizontalSpeed += 0.2;
             }
 
@@ -75,7 +75,8 @@ public class MoveSpeedType extends Type {
         if (playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().size() == 8) {
             double averageSpeed = playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().stream().mapToDouble(d -> d).average().getAsDouble();
 
-            if (averageSpeed > 0.9604 || averageSpeed < -0.9604) {
+            if (Math.abs(averageSpeed) > 0.9604) {
+                Bukkit.broadcastMessage("" + averageSpeed);
                 playerProperty.addAlert(new Alert(this, playerProperty));
             }
 
@@ -86,7 +87,10 @@ public class MoveSpeedType extends Type {
             playerProperty.addAlert(new Alert(this, playerProperty));
         }
 
+        double friction = bridge.getBlockfriction(player);
+
         playerProperty.getPlayerPropertyFactory().previousHorizontalDistance = horizontalDistance * blockFriction;
+        playerProperty.getPlayerPropertyFactory().blockfriction = friction < 0.6001 ? 0.91 : friction;
 
     }, new EventMoveFilter(false));
 }
