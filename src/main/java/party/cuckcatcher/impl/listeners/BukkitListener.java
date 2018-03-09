@@ -2,13 +2,17 @@ package party.cuckcatcher.impl.listeners;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import party.cuckcatcher.api.bridge.Bridge;
 import party.cuckcatcher.api.listener.Listener;
 import party.cuckcatcher.impl.CuckCatcher;
+import party.cuckcatcher.impl.event.events.combat.EventBukkitAttack;
 import party.cuckcatcher.impl.event.events.motion.EventMove;
 import party.cuckcatcher.impl.property.PlayerProperty;
 
@@ -36,17 +40,35 @@ public class BukkitListener implements Listener, org.bukkit.event.Listener {
 
         PlayerProperty playerProperty = this.getCuckCatcher().getPlayerPropertyManager().getProperty(player);
 
-        Location groundLocation = from.clone().subtract(0, 0.001, 0),
-        aboveLocation = from.clone().add(0, 2.001, 0);
+        Location groundLocation = from.clone().subtract(0.0, 0.001, 0.0);
 
-        //Bukkit.broadcastMessage(to.clone().subtract(0, 0.001, 0).getBlock().getType().name());
+        Bridge bridge = this.getCuckCatcher().getBridge();
 
         playerProperty.getPlayerPropertyFactory().onGround = isOnGround(groundLocation);
-        playerProperty.getPlayerPropertyFactory().underBlock = isOnGround(aboveLocation);
+        playerProperty.getPlayerPropertyFactory().underBlock = bridge.underBlock(player);
 
         playerProperty.getPlayerPropertyFactory().airTicks = playerProperty.getPlayerPropertyFactory().onGround ? 0 : playerProperty.getPlayerPropertyFactory().airTicks + 1;
 
-        this.getCuckCatcher().getBus().post(new EventMove(event, player, playerProperty, horizontalDistance, verticalDistance, to.getY() > from.getY()));
+        if (player.getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
+
+        this.getCuckCatcher().getBus().post(new EventMove(event, player, playerProperty, horizontalDistance, verticalDistance, to.getY() > from.getY(), isOnGround(to.clone().subtract(0.0, 0.001, 0.0))));
+    }
+
+    @EventHandler
+    public void onAttack(EntityDamageByEntityEvent event) {
+
+        if (!(event.getDamager() instanceof Player)) {
+            return;
+        }
+        Player player = (Player) event.getDamager();
+
+        Entity defender = event.getEntity();
+
+        PlayerProperty playerProperty = this.getCuckCatcher().getPlayerPropertyManager().getProperty(player);
+
+        this.getCuckCatcher().getBus().post(new EventBukkitAttack(player, defender, playerProperty));
     }
 
     private boolean isOnGround(Location location) {
@@ -56,11 +78,6 @@ public class BukkitListener implements Listener, org.bukkit.event.Listener {
             case CARPET:
             case SKULL:
             case WATER_LILY:
-                return true;
-
-            case SIGN:
-            case SIGN_POST:
-            case WALL_SIGN:
                 return true;
 
             default:

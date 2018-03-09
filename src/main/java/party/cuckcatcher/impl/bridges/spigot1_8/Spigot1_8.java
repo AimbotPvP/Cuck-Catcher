@@ -1,6 +1,7 @@
 package party.cuckcatcher.impl.bridges.spigot1_8;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import com.sun.javafx.geom.Vec3d;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -53,5 +54,12 @@ public class Spigot1_8 implements Bridge {
     @Override
     public boolean onGround(Player player) {
         return ((CraftPlayer) player).getHandle().onGround;
+    }
+
+    @Override
+    public boolean underBlock(Player player) {
+        EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+
+        return nmsPlayer.world.c(nmsPlayer.getBoundingBox().grow(0.5, 0.5, 0.5));
     }
 }

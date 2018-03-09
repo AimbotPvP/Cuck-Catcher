@@ -1,7 +1,7 @@
 package party.cuckcatcher.impl.filters.packet;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketEvent;
+import party.cuckcatcher.impl.event.events.universal.EventPacket;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 /**
  * Made by SkidRevenant at 03/03/2018
  */
-public class PacketFilter implements Predicate<PacketEvent> {
+public class PacketFilter implements Predicate<EventPacket> {
 
     private final PacketType[] types;
 
@@ -19,8 +19,8 @@ public class PacketFilter implements Predicate<PacketEvent> {
     }
 
     @Override
-    public boolean test(PacketEvent packetEvent) {
-        PacketType packetType = packetEvent.getPacketType();
+    public boolean test(EventPacket event) {
+        PacketType packetType = event.getPacketEvent().getPacketType();
 
         AtomicBoolean isValidType = new AtomicBoolean(false);
 

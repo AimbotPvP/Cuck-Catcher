@@ -1,9 +1,8 @@
 package party.cuckcatcher.impl.type.types.motion;
 
 import org.bukkit.Bukkit;
-
 import org.bukkit.GameMode;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import party.cuckcatcher.api.bridge.Bridge;
 import party.cuckcatcher.api.event.EventListener;
@@ -14,6 +13,7 @@ import party.cuckcatcher.impl.event.Link;
 import party.cuckcatcher.impl.event.events.motion.EventMove;
 import party.cuckcatcher.impl.filters.motion.EventMoveFilter;
 import party.cuckcatcher.impl.property.PlayerProperty;
+import party.cuckcatcher.impl.property.containers.VelocityContainer;
 
 /**
  * Made by SkidRevenant at 03/03/2018
@@ -22,7 +22,6 @@ import party.cuckcatcher.impl.property.PlayerProperty;
 public class MoveSpeedType extends Type {
 
     //this is mostly from the minecraft source code, it's still a work in progress
-    //TODO: Make a velocity container and account for velocity
 
     @EventListener
     private Link<EventMove> onMoveListener = new Link<>(event -> {
@@ -34,22 +33,23 @@ public class MoveSpeedType extends Type {
 
         Bridge bridge = this.getCuckCatcher().getBridge();
 
-        double horizontalDistance = event.getHorizontalDistance(),
-                verticalDistance = event.getVerticalDistance();
+        double verticalDistance = event.getVerticalDistance();
 
         double horizontalSpeed = playerProperty.getPlayerPropertyFactory().moveSpeed;
-
-        double speedLimit = playerProperty.getPlayerPropertyFactory().underBlock ? 1.17453292 : 1.0;
 
         double blockFriction = playerProperty.getPlayerPropertyFactory().blockfriction;
 
         boolean isPlayerOnGround = bridge.onGround(player);
 
+        double speedLimit = playerProperty.getPlayerPropertyFactory().underBlock ? 1.38235 : 1.0;
+
         if (isPlayerOnGround) {
 
-            horizontalSpeed *= 1.3;
             blockFriction *= 0.91;
-            horizontalSpeed *= 0.16277136 / (blockFriction * blockFriction * blockFriction);
+
+            horizontalSpeed *= blockFriction > 0.708 ? 1.3 : 0.23315;
+
+            horizontalSpeed *= 0.16277136 / Math.pow(blockFriction, 3);
 
             if (verticalDistance > 0.4199) {
                 horizontalSpeed += 0.2;
@@ -60,42 +60,41 @@ public class MoveSpeedType extends Type {
             blockFriction = 0.91;
         }
 
-        double previousHorizontal = Math.max(0.1, playerProperty.getPlayerPropertyFactory().previousHorizontalDistance);
+        double previousHorizontal = playerProperty.getPlayerPropertyFactory().previousHorizontalDistance;
 
-        if (horizontalDistance - previousHorizontal > horizontalSpeed * 1.1) {
+        Location to = event.getPlayerMoveEvent().getTo(),
+        from = event.getPlayerMoveEvent().getFrom();
+
+        double deltaX = to.getX() - from.getX(),
+                deltaZ = to.getZ() - from.getZ();
+
+        double horizontalDistance = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+
+        if (horizontalDistance - previousHorizontal > horizontalSpeed * 0.1) {
             playerProperty.getPlayerPropertyFactory().moveSpeed = Math.max(playerProperty.getPlayerPropertyFactory().moveSpeed, this.getCuckCatcher().getBridge().updateMovementSpeed(player));
-        }
 
-        double moveSpeed = (horizontalDistance - previousHorizontal) / horizontalSpeed;
+            VelocityContainer velocityContainer = playerProperty.getPlayerPropertyFactory().getVelocityContainer();
 
-        moveSpeed *= 0.98;
+            double currentVelocity = velocityContainer.getHighest(3);
 
-        if (horizontalDistance > 0.1) {
-            playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().add(moveSpeed);
-        }
-
-        if (playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().size() == 8) {
-            double averageSpeed = playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().stream().mapToDouble(d -> d).average().getAsDouble();
-
-            if (Math.abs(averageSpeed) > 0.9633003) {
-                playerProperty.addAlert(new Alert(this, playerProperty));
+            if (currentVelocity > 0.0) {
+                horizontalSpeed += Math.sqrt(currentVelocity);
             }
 
-            playerProperty.getPlayerPropertyFactory().getMoveSpeedSamples().clear();
-        }
+            double moveSpeed = (horizontalDistance - previousHorizontal) / horizontalSpeed;
 
-        if (player.isBlocking()) {
-            moveSpeed *= isPlayerOnGround ? (verticalDistance <= 0 || verticalDistance > 0.4199) ? 19.0 : 1.3 : 1.6;
-        }
+            moveSpeed *= 0.98;
 
-        if (moveSpeed > speedLimit) {
-            playerProperty.addAlert(new Alert(this, playerProperty));
+            if (moveSpeed > speedLimit && playerProperty.getStrikeCollectorFactory().getSpeedCollector().strike()) {
+                playerProperty.addAlert(new Alert(this, playerProperty, moveSpeed));
+            }
+
         }
 
         double friction = bridge.getBlockfriction(player);
 
         playerProperty.getPlayerPropertyFactory().previousHorizontalDistance = horizontalDistance * blockFriction;
-        playerProperty.getPlayerPropertyFactory().blockfriction = friction < 0.6001 ? 0.91 : friction;
+        playerProperty.getPlayerPropertyFactory().blockfriction = friction;
 
     }, new EventMoveFilter(false));
 }

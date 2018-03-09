@@ -13,4 +13,6 @@ public interface Bridge {
     double getBlockfriction(Player player);
 
     boolean onGround(Player player);
+
+    boolean underBlock(Player player);
 }

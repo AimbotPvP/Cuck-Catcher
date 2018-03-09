@@ -10,6 +10,7 @@ import party.cuckcatcher.impl.event.Link;
 import party.cuckcatcher.impl.event.events.motion.EventMove;
 import party.cuckcatcher.impl.filters.motion.EventMoveFilter;
 import party.cuckcatcher.impl.property.PlayerProperty;
+import party.cuckcatcher.impl.property.containers.VelocityContainer;
 
 /**
  * Made by SkidRevenant at 04/03/2018
@@ -24,12 +25,15 @@ public class StepType extends Type {
 
         PlayerProperty playerProperty = event.getPlayerProperty();
 
-        Location from = event.getPlayerMoveEvent().getFrom();
+        if (event.isFromGround() && verticalDistance > 0.5) {
 
-        boolean wasFromGround = from.clone().subtract(0.0, 0.001, 0.0).getBlock().getType() != Material.AIR;
+            VelocityContainer velocityContainer = playerProperty.getPlayerPropertyFactory().getVelocityContainer();
 
-        if (event.isFromGround() && wasFromGround && verticalDistance > 0.5) {
-            playerProperty.addAlert(new Alert(this, playerProperty));
+            double velocity = velocityContainer.getLowest(1);
+
+            if (velocity == 0) {
+                playerProperty.addAlert(new Alert(this, playerProperty));
+            }
         }
 
     }, new EventMoveFilter(false));

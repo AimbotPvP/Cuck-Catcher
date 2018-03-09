@@ -2,7 +2,9 @@ package party.cuckcatcher.impl.property;
 
 import lombok.Getter;
 import party.cuckcatcher.api.type.Type;
+import party.cuckcatcher.impl.property.containers.VelocityContainer;
 import party.cuckcatcher.impl.type.TypeInfo;
+import party.cuckcatcher.impl.util.RiseOff;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +18,9 @@ public class PlayerPropertyFactory {
 
     private Map<Type, TypeInfo> typeInformation = new HashMap<>();
 
+    @Getter
+    private VelocityContainer velocityContainer = new VelocityContainer();
+
     public TypeInfo get(Type type) {
         TypeInfo typeInformation = this.typeInformation.get(type);
 
@@ -27,18 +32,34 @@ public class PlayerPropertyFactory {
         return typeInformation;
     }
 
+    public RiseOff riseOff = RiseOff.NONE;
+
     @Getter
     private List<Double> moveSpeedSamples = new ArrayList<>();
 
     public double previousHorizontalDistance = 0,
-            jumpTicks = 0,
             airTicks = 0,
             moveSpeed = 1.0,
             blockfriction = 0.91;
+
+    public int flyTicks = 0;
+
+    public long lastMovePacketTime = 0L;
 
     public boolean onGround = false,
             underBlock = false,
             attacking = false,
             digging = false,
             placing = false;
+
+    public void onMovePacket() {
+        this.lastMovePacketTime = System.currentTimeMillis();
+        this.digging = false;
+        this.attacking = false;
+        this.placing = false;
+    }
+
+    public boolean isMoving() {
+        return System.currentTimeMillis() - this.lastMovePacketTime < 3;
+    }
 }

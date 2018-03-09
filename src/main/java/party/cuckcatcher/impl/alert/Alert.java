@@ -31,7 +31,7 @@ public class Alert {
         this.alert = this.typeInfo.getAlertManager().alert();
 
         try {
-            this.info = args == null ? "" : String.format(" (%s) ", args[0]);
+            this.info = args == null ? "" : String.format(" (%s)", args[0]);
         } catch (ArrayIndexOutOfBoundsException e) {
             this.info = "";
         }

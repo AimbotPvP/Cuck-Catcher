@@ -1,11 +1,9 @@
 package party.cuckcatcher.impl.event.events.combat;
 
-import com.comphenix.protocol.events.PacketEvent;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import party.cuckcatcher.impl.property.PlayerProperty;
 
@@ -15,11 +13,11 @@ import party.cuckcatcher.impl.property.PlayerProperty;
 @RequiredArgsConstructor
 @Getter
 @Setter
-public class EventAttack {
+public class EventPacketAttack {
 
-    private final Player attacker, attacked;
+    private final Player attacker;
 
-    private final PacketEvent packetEvent;
+    private final Entity attacked;
 
-    private final PlayerProperty playerProperty, attackedProperty;
+    private final PlayerProperty playerProperty;
 }

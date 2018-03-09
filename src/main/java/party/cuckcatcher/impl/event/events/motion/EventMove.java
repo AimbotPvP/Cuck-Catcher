@@ -25,6 +25,6 @@ public class EventMove {
 
     private final double verticalDistance;
 
-    private final boolean isFromGround;
+    private final boolean fromGround, toGround;
 
 }

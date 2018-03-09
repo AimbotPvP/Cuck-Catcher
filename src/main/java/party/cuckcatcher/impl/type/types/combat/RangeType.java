@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import party.cuckcatcher.api.type.Type;
 import party.cuckcatcher.api.type.TypeManifest;
 import party.cuckcatcher.impl.event.Link;
-import party.cuckcatcher.impl.event.events.combat.EventAttack;
+import party.cuckcatcher.impl.event.events.combat.EventPacketAttack;
 
 /**
  * Made by SkidRevenant at 04/03/2018
@@ -12,7 +12,7 @@ import party.cuckcatcher.impl.event.events.combat.EventAttack;
 @TypeManifest(label = "Range")
 public class RangeType extends Type {
 
-    private Link<EventAttack> eventAttackListener = new Link<>(event -> {
+    private Link<EventPacketAttack> eventAttackListener = new Link<>(event -> {
 
     });
 
