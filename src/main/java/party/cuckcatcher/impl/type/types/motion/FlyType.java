@@ -39,7 +39,6 @@ public class FlyType extends Type {
 
         if (currentRiseOff == RiseOff.OBSCURE || playerProperty.getPlayerPropertyFactory().flyTicks > 14) {
             playerProperty.addAlert(new Alert(this, playerProperty));
-            event.getPlayerMoveEvent().setCancelled(true);
         }
 
     }, new EventMoveFilter(true));
