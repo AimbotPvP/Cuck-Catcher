@@ -30,7 +30,7 @@ public class AlertManager {
 
         if (this.currentVl < 1) return false;
 
-        if (System.currentTimeMillis() - this.lastAlert < 250) return false;
+        if (System.currentTimeMillis() - this.lastAlert < 0) return false;
 
         this.lastAlert = System.currentTimeMillis();
         return true;

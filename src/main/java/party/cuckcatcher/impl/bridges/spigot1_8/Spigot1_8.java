@@ -12,7 +12,7 @@ import party.cuckcatcher.api.bridge.Bridge;
 import java.util.UUID;
 
 /**
- * Made by Bilk at 05/03/2018
+ * Made by SkidRevenant at 05/03/2018
  */
 public class Spigot1_8 implements Bridge {
 

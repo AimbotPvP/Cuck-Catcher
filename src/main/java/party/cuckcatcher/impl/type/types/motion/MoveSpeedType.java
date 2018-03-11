@@ -87,6 +87,7 @@ public class MoveSpeedType extends Type {
 
             if (moveSpeed > speedLimit && playerProperty.getStrikeCollectorFactory().getSpeedCollector().strike()) {
                 playerProperty.addAlert(new Alert(this, playerProperty, moveSpeed));
+                player.teleport(playerProperty.getPlayerPropertyFactory().lastGroundLocation);
             }
 
         }

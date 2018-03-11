@@ -1,7 +1,5 @@
 package party.cuckcatcher.impl.type.types.motion;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
 import party.cuckcatcher.api.event.EventListener;
 import party.cuckcatcher.api.type.Type;
 import party.cuckcatcher.api.type.TypeManifest;

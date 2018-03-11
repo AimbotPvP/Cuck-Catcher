@@ -40,12 +40,16 @@ public class BukkitListener implements Listener, org.bukkit.event.Listener {
 
         PlayerProperty playerProperty = this.getCuckCatcher().getPlayerPropertyManager().getProperty(player);
 
-        Location groundLocation = from.clone().subtract(0.0, 0.001, 0.0);
+        Location groundLocation = from.clone().subtract(0.0, 0.01, 0.0);
 
         Bridge bridge = this.getCuckCatcher().getBridge();
 
         playerProperty.getPlayerPropertyFactory().onGround = isOnGround(groundLocation);
         playerProperty.getPlayerPropertyFactory().underBlock = bridge.underBlock(player);
+
+        if (playerProperty.getPlayerPropertyFactory().onGround) {
+            playerProperty.getPlayerPropertyFactory().lastGroundLocation = from;
+        }
 
         playerProperty.getPlayerPropertyFactory().airTicks = playerProperty.getPlayerPropertyFactory().onGround ? 0 : playerProperty.getPlayerPropertyFactory().airTicks + 1;
 
@@ -62,6 +66,7 @@ public class BukkitListener implements Listener, org.bukkit.event.Listener {
         if (!(event.getDamager() instanceof Player)) {
             return;
         }
+
         Player player = (Player) event.getDamager();
 
         Entity defender = event.getEntity();

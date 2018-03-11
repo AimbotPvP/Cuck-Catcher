@@ -23,7 +23,7 @@ public class NofallType extends Type {
 
         double verticalDistance = event.getVerticalDistance();
 
-        if (player.getFallDistance() == 0.d && verticalDistance <- 0.07840000152589255) {
+        if (player.getFallDistance() == 0.f && verticalDistance <- 0.07840000152589255) {
 
             PlayerProperty playerProperty = event.getPlayerProperty();
 

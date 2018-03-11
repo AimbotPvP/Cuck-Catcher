@@ -1,9 +1,11 @@
 package party.cuckcatcher.impl.property;
 
 import lombok.Getter;
+import org.bukkit.Location;
 import party.cuckcatcher.api.type.Type;
 import party.cuckcatcher.impl.property.containers.VelocityContainer;
 import party.cuckcatcher.impl.type.TypeInfo;
+import party.cuckcatcher.impl.util.LookProperty;
 import party.cuckcatcher.impl.util.RiseOff;
 
 import java.util.ArrayList;
@@ -35,7 +37,10 @@ public class PlayerPropertyFactory {
     public RiseOff riseOff = RiseOff.NONE;
 
     @Getter
-    private List<Double> moveSpeedSamples = new ArrayList<>();
+    private List<LookProperty> lookList = new ArrayList<>();
+
+    public float lastYaw,
+    lastPitch;
 
     public double previousHorizontalDistance = 0,
             airTicks = 0,
@@ -51,6 +56,8 @@ public class PlayerPropertyFactory {
             attacking = false,
             digging = false,
             placing = false;
+
+    public Location lastGroundLocation = null;
 
     public void onMovePacket() {
         this.lastMovePacketTime = System.currentTimeMillis();

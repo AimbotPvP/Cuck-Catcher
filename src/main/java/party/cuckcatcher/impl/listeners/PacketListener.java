@@ -8,6 +8,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityVelocity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import party.cuckcatcher.impl.CuckCatcher;
@@ -103,8 +104,8 @@ public class PacketListener extends PacketAdapter {
             PacketContainer packet = event.getPacket();
 
             if (player.getEntityId() != packet.getIntegers().read(0)) {
-                  return;
-                }
+                return;
+            }
 
             double x = packet.getIntegers().read(1) / 8000.0,
                     y = packet.getIntegers().read(2) / 8000.0,

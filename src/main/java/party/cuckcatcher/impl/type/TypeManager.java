@@ -40,8 +40,11 @@ public class TypeManager implements Manager {
         Type type = null;
         try {
             type = (Type) clazz.newInstance();
+
             this.getCuckCatcher().getBus().subscribe(type);
+
             type.setCuckCatcher(this.getCuckCatcher());
+
             this.types.add(type);
         } catch (Exception e) {
             e.printStackTrace();
