@@ -1,5 +1,6 @@
 package party.cuckcatcher.impl.type.types.motion;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import party.cuckcatcher.api.event.EventListener;
 import party.cuckcatcher.api.type.Type;
@@ -38,7 +39,7 @@ public class FlyType extends Type {
         playerProperty.getPlayerPropertyFactory().flyTicks = isOnGround ? 0 : (playerProperty.getPlayerPropertyFactory().flyTicks += currentRiseOff.getMaxRiseTicks());
 
         if (currentRiseOff == RiseOff.OBSCURE || playerProperty.getPlayerPropertyFactory().flyTicks > 14) {
-            playerProperty.addAlert(new Alert(this, playerProperty));
+            playerProperty.addAlert(new Alert(this, playerProperty, verticalDistance));
             player.teleport(playerProperty.getPlayerPropertyFactory().lastGroundLocation);
         }
 

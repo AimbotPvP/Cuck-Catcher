@@ -47,7 +47,8 @@ public class PlayerPropertyFactory {
             moveSpeed = 1.0,
             blockfriction = 0.91;
 
-    public int flyTicks = 0;
+    public int flyTicks = 0,
+    waterTicks = 0;
 
     public long lastMovePacketTime = 0L;
 

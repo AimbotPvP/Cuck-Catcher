@@ -2,12 +2,14 @@ package party.cuckcatcher.impl.type.types.combat.aura;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import party.cuckcatcher.api.event.EventListener;
 import party.cuckcatcher.api.type.Type;
 import party.cuckcatcher.api.type.TypeManifest;
+import party.cuckcatcher.impl.alert.Alert;
 import party.cuckcatcher.impl.event.Link;
 import party.cuckcatcher.impl.event.events.combat.EventBukkitAttack;
 import party.cuckcatcher.impl.event.events.universal.EventPacket;
@@ -36,15 +38,11 @@ public class AuraAType extends Type {
         Entity defender = event.getDefender();
 
         PlayerProperty playerProperty = event.getPlayerProperty();
-
-        playerProperty.setLastTarget(new WeakReference<>(defender));
     });
 
     @EventListener
     private Link<EventPacket> onLookListener = new Link<>(event -> {
         PlayerProperty playerProperty = event.getPlayerProperty();
-
-        Player player = event.getPlayer();
 
         PacketContainer packetContainer = event.getPacketEvent().getPacket();
 
@@ -78,19 +76,12 @@ public class AuraAType extends Type {
                     .mapToDouble(LookProperty::getPitch)
                     .average()
                     .getAsDouble();
-        }
 
-        if (playerProperty.getLastTarget().get() != null) {
-            Entity defender = playerProperty.getLastTarget().get();
-
-            if (defender.isDead()) {
-                playerProperty.getLastTarget().clear();
+            if ((averageYawDelta < 1.d && averageYawDelta > 0.d || averagePitchDelta <=- 0.01) && level.get() >= 90) {
+                playerProperty.addAlert(new Alert(this, playerProperty));
             }
 
-            double distanceFromCenter = player.getLocation().getDirection().normalize()
-                    .crossProduct(defender.getLocation().toVector().subtract(player.getLocation().toVector()))
-                    .lengthSquared();
-
+            playerProperty.getPlayerPropertyFactory().getLookList().clear();
         }
 
         playerProperty.getPlayerPropertyFactory().lastYaw = yaw;
